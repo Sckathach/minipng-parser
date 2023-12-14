@@ -1,0 +1,4 @@
+(library
+ (name minipng)
+ (public_name parser)
+ (libraries))
