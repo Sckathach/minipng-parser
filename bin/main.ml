@@ -19,18 +19,15 @@ let rec print_int_list = function
     [] -> ()
     | x :: q -> Printf.printf "%d " x; print_int_list q
 
-let display_data width height data =
-    let rec aux x y data = match x, y, data with
-        | x, _ , _ when x >= width / 8 ->
+let display_data width data =
+    for i = 0 to String.length data - 1 do
+        if i <> 0 && i mod width = 0 then
             print_newline ();
-            aux 0 (y + 1) data
-        | x, y, _ when x >= width && y >= height -> ()
-        | _, _, [] -> ()
-        | _, _, t :: q ->
-            Printf.printf "%s" (binary_to_image (int_to_binary_string t));
-            aux (x + 1) y q
-    in
-        aux 1 1 (List.rev data)
+        Printf.printf "%c" (String.get data i)
+    done
+
+let transform_string s =
+    String.map (fun c -> if c = '0' then '*' else ' ') s
 
 let () =
     let filename = Sys.argv.(1) in
@@ -46,7 +43,7 @@ let () =
         | (Data data) :: q ->
 (*            print_int_list data; *)
 (*            print_endline ""; *)
-            display_data width height data;
+            display_data width (transform_string data);
             aux width height q
     in
         aux 0 0 blocks

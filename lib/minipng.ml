@@ -15,7 +15,7 @@ type header = {
 type block =
     Header of header
     | Comment of string
-    | Data of int list
+    | Data of string
 
 let int_to_binary_string n =
   if n < 0 || n > 255 then
@@ -25,6 +25,13 @@ let int_to_binary_string n =
     else aux (n lsr 1) ((string_of_int (n land 1)) ^ acc) (i + 1)
   in
   aux n "" 0
+
+let data_to_binary_string data =
+    let rec aux acc = function
+        [] -> acc
+        | x :: q -> aux ((int_to_binary_string x) ^ acc) q
+    in
+        aux "" data
 
 let binary_to_image binary_string =
     String.map (fun c -> if c = '1' then ' ' else '*') binary_string
@@ -55,7 +62,7 @@ let read_block first_char ic =
                 0 -> acc
                 | n -> aux ic (n - 1) ((input_byte ic) :: acc)
             in
-                Data (aux ic block_length [])
+                Data (data_to_binary_string (aux ic block_length []))
         | _ -> failwith "Unknown block type"
 
 let read_magic_number ic =
