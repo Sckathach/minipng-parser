@@ -2,3 +2,7 @@
  (name minipng)
  (public_name parser)
  (libraries))
+
+(env
+  (dev
+    (flags (:standard -warn-error -A))))

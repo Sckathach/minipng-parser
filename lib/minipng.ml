@@ -15,7 +15,19 @@ type header = {
 type block =
     Header of header
     | Comment of string
-    | Data of bytes
+    | Data of int list
+
+let int_to_binary_string n =
+  if n < 0 || n > 255 then
+    invalid_arg "Number must be between 0 and 255";
+  let rec aux n acc i =
+    if i = 8 then acc
+    else aux (n lsr 1) ((string_of_int (n land 1)) ^ acc) (i + 1)
+  in
+  aux n "" 0
+
+let binary_to_image binary_string =
+    String.map (fun c -> if c = '1' then ' ' else '*') binary_string
 
 let read_int_from_bytes ic n =
     let rec read_bytes ic n acc =
@@ -39,7 +51,11 @@ let read_block first_char ic =
         | 'C' ->
             Comment (really_input_string ic block_length)
         | 'D' ->
-            Data (Bytes.of_string (really_input_string ic block_length))
+            let rec aux ic n acc = match n with
+                0 -> acc
+                | n -> aux ic (n - 1) ((input_byte ic) :: acc)
+            in
+                Data (aux ic block_length [])
         | _ -> failwith "Unknown block type"
 
 let read_magic_number ic =
