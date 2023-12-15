@@ -1,14 +1,9 @@
-;(test
-;    (name parser_tests)
-;    (libraries minipng))
-
 (library
     (name tests)
-    (libraries minipng)
+    (libraries lib)
     (inline_tests)
     (preprocess
         (pps ppx_inline_test)))
-
 (env
   (dev
     (flags (:standard -warn-error -A))))

@@ -104,3 +104,31 @@ let parse_file filename =
     with e ->
         close_in_noerr ic;
     raise e
+
+let display_header minipng =
+    let header = minipng.header in
+    let result = ref "" in
+    result := !result ^ Printf.sprintf "Width: %d\n" header.width;
+    result := !result ^ Printf.sprintf "Height: %d\n" header.height;
+    result := !result ^ Printf.sprintf "Pixel Type: %d " header.pixel_type;
+    begin
+        match header.pixel_type with
+            0 -> result := !result ^ "(black-and-white)\n"
+            | _ -> result := !result ^ "(other types not implemented)\n"
+    end;
+    !result
+
+let display_data minipng =
+    let width = minipng.header.width in
+    let data = transform_string minipng.data in
+    let result = ref "" in
+    for i = 0 to String.length data - 1 do
+        if i <> 0 && i mod width = 0 then
+            result := !result ^ "\n" ;
+        result := !result ^ Printf.sprintf "%c" (String.get data i)
+    done;
+    !result
+
+let display_comment minipng =
+    Printf.sprintf "Comments:\n\"%s\"\n" minipng.comment
+

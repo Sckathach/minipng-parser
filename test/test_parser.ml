@@ -1,4 +1,4 @@
-open Minipng
+open Lib.Minipng
 open Filename
 
 (*Idk why it doesn't work with relative PATH...*)

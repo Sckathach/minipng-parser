@@ -1,8 +1,7 @@
 (executable
  (name main)
  (public_name parser)
- (libraries minipng))
-
+ (libraries lib))
 (env
   (dev
     (flags (:standard -warn-error -A))))
