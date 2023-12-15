@@ -131,4 +131,3 @@ let display_data minipng =
 
 let display_comment minipng =
     Printf.sprintf "Comments:\n\"%s\"\n" minipng.comment
-
