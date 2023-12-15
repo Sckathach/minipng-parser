@@ -15,10 +15,6 @@ let display_header header =
         0 -> print_endline "(black-and-white)"
         | _ -> print_endline "(other types not implemented)"
 
-let rec print_int_list = function
-    [] -> ()
-    | x :: q -> Printf.printf "%d " x; print_int_list q
-
 let display_data width data =
     for i = 0 to String.length data - 1 do
         if i <> 0 && i mod width = 0 then
@@ -26,8 +22,6 @@ let display_data width data =
         Printf.printf "%c" (String.get data i)
     done
 
-let transform_string s =
-    String.map (fun c -> if c = '0' then '*' else ' ') s
 
 let () =
     let filename = Sys.argv.(1) in

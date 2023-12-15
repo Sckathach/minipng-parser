@@ -1,2 +1,8 @@
-(test
- (name test_parser))
+;(test
+;    (name tests))
+
+(library
+    (name tests)
+    (inline_tests)
+    (preprocess
+        (pps ppx_inline_test)))
