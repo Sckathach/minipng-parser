@@ -32,18 +32,7 @@ let transform_string s =
 let () =
     let filename = Sys.argv.(1) in
     let blocks = parse_file filename in
-    let rec aux width height = function
-        [] -> ()
-        | (Header header) :: q ->
-            display_header header;
-            aux header.width header.height q
-        | (Comment comment) :: q ->
-            Printf.printf "Comments:\n\"%s\"\n" comment;
-            aux width height q
-        | (Data data) :: q ->
-(*            print_int_list data; *)
-(*            print_endline ""; *)
-            display_data width (transform_string data);
-            aux width height q
-    in
-        aux 0 0 blocks
+    let minipng = blocks_to_minipng blocks in
+    display_header minipng.header;
+    Printf.printf "Comments:\n\"%s\"\n" minipng.comment;
+    display_data minipng.header.width (transform_string minipng.data);

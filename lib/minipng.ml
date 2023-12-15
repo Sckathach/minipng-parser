@@ -17,6 +17,21 @@ type block =
     | Comment of string
     | Data of string
 
+type minipng = {
+    header: header;
+    comment: string;
+    data: string;
+}
+
+let blocks_to_minipng blocks =
+    let rec aux blocks header comment data = match blocks with
+        [] -> { header = header; comment = comment; data = data }
+        | Header h :: t -> aux t h comment data
+        | Comment c :: t -> aux t header (comment ^ c) data
+        | Data d :: t -> aux t header comment (data ^ d)
+    in aux blocks { width = 0; height = 0; pixel_type = 0 } "" ""
+
+
 let int_to_binary_string n =
   if n < 0 || n > 255 then
     invalid_arg "Number must be between 0 and 255";
