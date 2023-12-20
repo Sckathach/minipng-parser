@@ -1,7 +1,7 @@
 (executable
  (name main)
  (public_name parser)
- (libraries lib))
+ (libraries lib spectrum))
 (env
   (dev
     (flags (:standard -warn-error -A))))
