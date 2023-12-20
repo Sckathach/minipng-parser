@@ -4,8 +4,6 @@
  > ^ <
 *)
 
-type block_type = Header | Comment | Data
-
 type header = {
     width: int;
     height: int;
@@ -34,7 +32,7 @@ let blocks_to_minipng blocks =
 
 let int_to_binary_string n =
     if n < 0 || n > 255 then
-        invalid_arg "Number must be between 0 and 255";
+        failwith "Number must be between 0 and 255";
     let rec aux n acc i =
         if i = 8 then acc
         else aux (n lsr 1) ((string_of_int (n land 1)) ^ acc) (i + 1)
@@ -48,8 +46,6 @@ let data_to_binary_string data =
     in
         aux "" data
 
-let binary_to_image binary_string =
-    String.map (fun c -> if c = '1' then ' ' else '*') binary_string
 let transform_string s =
     String.map (fun c -> if c = '0' then '*' else ' ') s
 
