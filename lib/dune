@@ -1,5 +1,6 @@
 (library
- (name lib))
+ (name lib)
+ (libraries spectrum))
 (env
   (dev
     (flags (:standard -warn-error -A))))

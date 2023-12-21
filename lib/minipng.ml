@@ -4,6 +4,8 @@
  > ^ <
 *)
 
+let rgb_pixel r g b = Spectrum.Simple.sprintf "@{<bg:rgb(%d %d %d)>%s@}" r g b "  "
+let grey_pixel x = rgb_pixel x x x
 type header = {
     width: int;
     height: int;
@@ -110,11 +112,15 @@ let display_header minipng =
     begin
         match header.pixel_type with
             0 -> result := !result ^ "(black-and-white)\n"
+            | 1 -> result := !result ^ "(grey-scale)\n"
+            | 3 -> result := !result ^ "(color)\n"
             | _ -> result := !result ^ "(other types not implemented)\n"
     end;
     !result
 
-let display_data minipng =
+
+
+let display_data_bw minipng =
     let width = minipng.header.width in
     let data = transform_string minipng.data in
     let result = ref "" in
@@ -127,3 +133,47 @@ let display_data minipng =
 
 let display_comment minipng =
     Printf.sprintf "Comments:\n\"%s\"\n" minipng.comment
+
+let display_data_grey minipng =
+    let width = minipng.header.width in
+    let data = minipng.data in
+    let sum = ref 0 in
+    let result = ref "" in
+    for i = 0 to (String.length data / 8) - 1 do
+        if i mod width = 0 && i <> 0 then result := !result ^ "\n";
+        sum := 0;
+        for j = 0 to 7 do
+            sum := !sum + (int_of_char data.[8 * i + j] - 48) * (int_of_float (2. ** float_of_int (7 - j)));
+        done;
+        result := !result ^ (grey_pixel !sum);
+    done;
+    !result
+
+let display_data_color minipng =
+    let width = minipng.header.width in
+    let data = minipng.data in
+    let red = ref 0 in
+    let green = ref 0 in
+    let sum = ref 0 in
+    let result = ref "" in
+    for i = 0 to (String.length data / 8) - 1 do
+        if i mod (width * 3) = 0 && i <> 0 then result := !result ^ "\n";
+        sum := 0;
+        for j = 0 to 7 do
+            sum := !sum + (int_of_char data.[8 * i + j] - 48) * (int_of_float (2. ** float_of_int (7 - j)));
+        done;
+        begin
+            match i mod 3 with
+                | 0 -> red := !sum
+                | 1 -> green := !sum
+                | 2 -> result := !result ^ (rgb_pixel !red !green !sum)
+        end;
+    done;
+    !result
+
+
+let display_data minipng = match minipng.header.pixel_type with
+    0 -> print_endline "BW"; display_data_bw minipng
+    | 1 -> display_data_grey minipng
+    | 3 -> display_data_color minipng
+    | _ -> failwith "Wrong pixel type!"
