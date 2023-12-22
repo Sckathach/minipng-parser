@@ -6,6 +6,7 @@
 
 let rgb_pixel r g b = Spectrum.Simple.sprintf "@{<bg:rgb(%d %d %d)>%s@}" r g b "  "
 let grey_pixel x = rgb_pixel x x x
+
 type header = {
     width: int;
     height: int;
@@ -60,7 +61,6 @@ let read_int_from_bytes ic n =
     in
         read_bytes ic n 0
 
-
 let read_block first_char ic =
     let block_type_char = first_char in
     let block_length = read_int_from_bytes ic 4 in
@@ -78,6 +78,7 @@ let read_block first_char ic =
                 | n -> aux ic (n - 1) ((input_byte ic) :: acc)
             in
                 Data (data_to_binary_string (aux ic block_length []))
+        | 'P' -> failwith "Palette not yet supported"
         | _ -> failwith "Unknown block type"
 
 let read_magic_number ic =
@@ -117,8 +118,6 @@ let display_header minipng =
             | _ -> result := !result ^ "(other types not implemented)\n"
     end;
     !result
-
-
 
 let display_data_bw minipng =
     let width = minipng.header.width in
@@ -171,9 +170,8 @@ let display_data_color minipng =
     done;
     !result
 
-
 let display_data minipng = match minipng.header.pixel_type with
-    0 -> print_endline "BW"; display_data_bw minipng
+    0 -> display_data_bw minipng
     | 1 -> display_data_grey minipng
     | 3 -> display_data_color minipng
-    | _ -> failwith "Wrong pixel type!"
+    | _ -> failwith "Pixel type not yet supported!"
